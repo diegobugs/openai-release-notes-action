@@ -1,4 +1,4 @@
-name: AI Release Notes Action
+name: OpenAI Release Notes Action
 description: |
   Publish a release with current PR and generates a better-written (Human readable) changelog text.
 author: "Diego Bugs"
