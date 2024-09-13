@@ -1,6 +1,6 @@
 name: AI Release Notes Action
 description: |
-  This action reads the release notes body, processes it through an AI model, and generates a better-written (Human readable) changelog text.
+  Publish a release with current PR and generates a better-written (Human readable) changelog text.
 author: "Diego Bugs"
 branding:
   icon: "cpu"
