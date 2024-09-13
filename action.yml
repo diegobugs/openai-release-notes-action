@@ -1,0 +1,26 @@
+name: AI Release Notes Action
+description: |
+  This action reads the release notes body, processes it through an AI model, and generates a better-written (Human readable) changelog text.
+author: "Diego Bugs"
+branding:
+  icon: "cpu"
+  color: "blue"
+
+inputs:
+  language:
+    description: "The language of the output."
+    required: true
+    default: "en"
+  openai-api-key:
+    description: "The OpenAI API key."
+    required: true
+  token:
+    description: "The GitHub token."
+    required: false
+  version:
+    description: "The version of the release."
+    required: true
+
+runs:
+  using: "node20"
+  main: "dist/index.js"
