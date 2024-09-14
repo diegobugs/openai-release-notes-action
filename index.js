@@ -46,7 +46,7 @@ async function run() {
 
   // Retrieve all commits from the PR
   const prNumber = context.payload.pull_request.number;
-  const commits = octokit.rest.pulls.listCommits({
+  const commits = await octokit.rest.pulls.listCommits({
     owner: context.repo.owner,
     repo: context.repo.repo,
     pull_number: prNumber,
