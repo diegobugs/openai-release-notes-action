@@ -47209,12 +47209,10 @@ async function run() {
       "The changelog must be written in markdown format." +
       `The changelog must be written in [${language}].` +
       "The changelog must use words 'add' for features, changes, improvements, updates and 'fix' for hotfixes, fixes" +
-      "The changelog must be written in the following structure" +
-      "```markdown" +
+      "The changelog must be written in the following structure:" +
       "## What's Changed" +
       "- Add new feature by @user" +
       "- Fix bug by @user" +
-      "```" +
       "Do not ask for more information, use the following information to write the changelog." +
       "The following information that made in this version (commit message, author):" +
       `${JSON.stringify(
@@ -47246,6 +47244,7 @@ async function run() {
         owner: context.repo.owner,
         repo: context.repo.repo,
         tag_name: version,
+        name: version,
         body: response,
       });
     } else {
