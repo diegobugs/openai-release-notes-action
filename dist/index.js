@@ -47181,7 +47181,7 @@ function parseInputs() {
  * @returns {Array<{label: string, url: string}[]>} The PRs associated with the commit
  */
 async function getPRsFromCommit(octokit, sha) {
-  const pr = await octokit.rest.pulls.listPullRequestsAssociatedWithCommit({
+  const pr = await octokit.rest.repos.listPullRequestsAssociatedWithCommit({
     owner: context.repo.owner,
     repo: context.repo.repo,
     commit_sha: sha,
