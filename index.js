@@ -107,7 +107,7 @@ async function run() {
           previous_tag_name: previousVersion,
         });
         githubNotesContext =
-          "\nFor more context use Github auto generated log also as context:\n" +
+          "\nFor more context use Github auto generated log also as context, avoid repeating with commits data:\n" +
           `${JSON.stringify(notes, null, 2)}`;
       } catch (error) {
         info("Failed to generate github notes", error);
@@ -129,7 +129,7 @@ async function run() {
         "### Full Changelog: [previous version...new version](url)") +
       "```" +
       "\nDo not ask for more information." +
-      "\nUse only the following data to write the changelog (commit message, author, PRs):" +
+      "\nUse only the following commits data to write the changelog (commit message, author, PRs):" +
       `${JSON.stringify(
         commits.data.map((c) => ({
           message: c.commit.message,
