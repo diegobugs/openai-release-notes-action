@@ -47263,10 +47263,8 @@ async function run() {
       "The changelog must be written in the following structure:\n" +
       "```\n" +
       "## What's Changed" +
-      "- Add new feature by @user, [#PR number](url)" +
-      "- Fix bug by @user, [#PR number](url)" +
-      (useGithubGeneratedNotes &&
-        "### Full Changelog: [previous version...new version](url)") +
+      "- Add new feature" +
+      "- Fix bug" +
       "```" +
       "\nDo not ask for more information." +
       "\nUse only the following commits data to write the changelog (commit message, author, PRs):" +
