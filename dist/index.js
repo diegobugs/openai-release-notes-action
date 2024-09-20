@@ -47282,17 +47282,20 @@ async function run() {
         ? "\n - mention commits or PRs when possible."
         : "\n - do not mention commits or PRs.") +
       "\n - notes must consist in useful information about the new features or bug fixes" +
-      "\n - must be clear and detailed." +
+      "\n - must be clear and concise." +
       "\n - group as features and fixes if possible." +
       "\n - must be organized with features first and then bug fixes." +
       `\n - must be written in the following language '${language}'.` +
       "\n - must be written in a friendly and professional tone." +
+      "\n - must be exactly what the information provided says, without adding up." +
       "\n - must be written in a markdown format" +
-      "\n - should have the following structure if possible:" +
+      "\n - should have the following structure (you can use the following template):" +
+      "\n   ```" +
       "\n   ## Features" +
       "\n   * This is a feature" +
       "\n   ## Fixes" +
       "\n   * This is a fix";
+    ("\n   ```");
 
     const completion = await openai.chat.completions.create({
       messages: [
