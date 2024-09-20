@@ -96,6 +96,11 @@ async function run() {
       apiKey: openaiApiKey,
     });
 
+    info(
+      "Using context from ",
+      useGithubGeneratedNotes ? "Github Notes" : "Commits"
+    );
+
     let userPromptContext = "";
     if (useGithubGeneratedNotes) {
       try {
@@ -134,15 +139,20 @@ async function run() {
     const prompt =
       "Your task is write release notes of a new version of the software following this rules:" +
       (useMentionCommitsPrs
-        ? "mention commits or PRs when possible,"
-        : "do not mention commits or PRs,") +
-      "notes must consist in useful information about the new features or bug fixes," +
-      "must be clear and detailed," +
-      "group as features and fixes if possible," +
-      "must be organized with features first and then bug fixes," +
-      `must be written in the following language '${language}'` +
-      "must be written in a friendly and professional tone," +
-      "must return in a markdown format.";
+        ? "\n - mention commits or PRs when possible."
+        : "\n - do not mention commits or PRs.") +
+      "\n - notes must consist in useful information about the new features or bug fixes" +
+      "\n - must be clear and detailed." +
+      "\n - group as features and fixes if possible." +
+      "\n - must be organized with features first and then bug fixes." +
+      `\n - must be written in the following language '${language}'.` +
+      "\n - must be written in a friendly and professional tone." +
+      "\n - must be written in a markdown format" +
+      "\n - should have the following structure if possible:" +
+      "\n   ## Features" +
+      "\n   * This is a feature" +
+      "\n   ## Fixes" +
+      "\n   * This is a fix";
 
     const completion = await openai.chat.completions.create({
       messages: [
