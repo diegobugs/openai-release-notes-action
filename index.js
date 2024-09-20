@@ -97,8 +97,9 @@ async function run() {
     });
 
     info(
-      "Using context from ",
-      useGithubGeneratedNotes ? "Github Notes" : "Commits"
+      `Using context from ${
+        useGithubGeneratedNotes ? "Github Notes" : "Commits"
+      }`
     );
 
     let userPromptContext = "";
@@ -113,7 +114,7 @@ async function run() {
           repo: context.repo.repo,
           tag_name: version,
           target_commitish: context.sha,
-          previous_tag_name: previousVersion,
+          previous_tag_name: previousVersion?.data?.tag_name,
         });
         userPromptContext =
           "\nUse the following notes and improve it:\n" +
