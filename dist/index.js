@@ -47160,7 +47160,7 @@ const OpenAI = __nccwpck_require__(2140);
 function parseInputs() {
   const openaiApiKey = getInput("openai-api-key");
   const language = getInput("language");
-  const model = getInput("model");
+  const model = getInput("model") || "gpt-4o";
   const token = getInput("token");
   const version = getInput("version");
   const useGithubGeneratedNotes = getInput("use-github-generated-notes");
@@ -47263,18 +47263,18 @@ async function run() {
         info(`Failed to generate github notes: ${error.message}`);
       }
     } else {
+      const commitData = await Promise.all(
+        commits.data.map(async (c) => ({
+          message: c.commit.message,
+          author: c.author.name,
+          authorUrl: c.author.html_url,
+          prs: await getPRsFromCommit(octokit, c.sha),
+        }))
+      );
+
       userPromptContext =
         "\nUse the following commits data to write the notes (commit message, author, PRs):" +
-        `${JSON.stringify(
-          commits.data.map((c) => ({
-            message: c.commit.message,
-            author: c.author.name,
-            authorUrl: c.author.html_url,
-            prs: getPRsFromCommit(octokit, c.sha),
-          })),
-          null,
-          2
-        )}`;
+        `${JSON.stringify(commitData, null, 2)}`;
     }
 
     const prompt =
@@ -47309,7 +47309,7 @@ async function run() {
           content: userPromptContext,
         },
       ],
-      model: model || "gpt-4o",
+      model: model,
     });
 
     if (completion) {
@@ -47327,7 +47327,9 @@ async function run() {
     }
     // Create a comment on the pull request
   } catch (error) {
-    setFailed(error.message || "Failed to run the action");
+    setFailed(
+      `Error in run function: ${error.message || "Failed to run the action"}`
+    );
   }
 }
 
