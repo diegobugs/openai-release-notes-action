@@ -10,6 +10,7 @@ const OpenAI = require("openai");
  * @property {string} version - The release version
  * @property {string} [token] - The token (optional)
  * @property {string} [useGithubGeneratedNotes] - Use Github generated notes (optional)
+ * @property {string} [useMentionCommitsPrs] - Use mention commits and PRs (optional)
  */
 
 /**
@@ -23,6 +24,7 @@ function parseInputs() {
   const token = getInput("token");
   const version = getInput("version");
   const useGithubGeneratedNotes = getInput("use-github-generated-notes");
+  const useMentionCommitsPrs = getInput("use-mention-commits-prs");
 
   return {
     language,
@@ -31,6 +33,7 @@ function parseInputs() {
     token,
     version,
     useGithubGeneratedNotes,
+    useMentionCommitsPrs,
   };
 }
 
@@ -65,6 +68,7 @@ async function run() {
     token,
     version,
     useGithubGeneratedNotes,
+    useMentionCommitsPrs,
   } = parseInputs();
   const octokit = getOctokit(token);
 
@@ -92,7 +96,7 @@ async function run() {
       apiKey: openaiApiKey,
     });
 
-    let githubNotesContext = "";
+    let userPromptContext = "";
     if (useGithubGeneratedNotes) {
       try {
         const previousVersion = await octokit.rest.repos.getLatestRelease({
@@ -106,46 +110,49 @@ async function run() {
           target_commitish: context.sha,
           previous_tag_name: previousVersion,
         });
-        githubNotesContext =
-          "\nFor more context use Github auto generated log also as context, avoid repeating with commits data:\n" +
+        userPromptContext =
+          "\nUse the following notes and improve it:\n" +
           `${JSON.stringify(notes, null, 2)}`;
       } catch (error) {
         info("Failed to generate github notes", error);
       }
+    } else {
+      userPromptContext =
+        "\nUse the following commits data to write the notes (commit message, author, PRs):" +
+        `${JSON.stringify(
+          commits.data.map((c) => ({
+            message: c.commit.message,
+            author: c.author.name,
+            authorUrl: c.author.html_url,
+            prs: getPRsFromCommit(octokit, c.sha),
+          })),
+          null,
+          2
+        )}`;
     }
 
     const prompt =
-      "You are a DEV OPS engineer, your responsibility is write changelog of the new software version." +
-      "The changelog consist on useful information about the new features and bug fixes of the software." +
-      "The changelog must be clear and concise, so the users can understand the changes." +
-      "The changelog must use words 'add' for features, changes, improvements, updates and 'fix' for hot-fixes, bugfix" +
-      "The changelog must be organized with features first and then bug fixes." +
-      "The changelog must be written in the following structure:\n" +
-      "```\n" +
-      "## What's Changed" +
-      "- Add new feature" +
-      "- Fix bug" +
-      "```" +
-      "\nDo not ask for more information." +
-      "\nUse only the following commits data to write the changelog (commit message, author, PRs):" +
-      `${JSON.stringify(
-        commits.data.map((c) => ({
-          message: c.commit.message,
-          author: c.author.name,
-          authorUrl: c.author.html_url,
-          prs: getPRsFromCommit(octokit, c.sha),
-        })),
-        null,
-        2
-      )}` +
-      githubNotesContext +
-      `\nThe changelog must be written in the following language '${language}'. Translate everything to this language.`;
+      "Your task is write release notes of a new version of the software following this rules:" +
+      (useMentionCommitsPrs
+        ? "mention commits or PRs when possible,"
+        : "do not mention commits or PRs,") +
+      "notes must consist in useful information about the new features or bug fixes," +
+      "must be clear and detailed," +
+      "group as features and fixes if possible," +
+      "must be organized with features first and then bug fixes," +
+      `must be written in the following language '${language}'` +
+      "must be written in a friendly and professional tone," +
+      "must return in a markdown format.";
 
     const completion = await openai.chat.completions.create({
       messages: [
         {
-          role: "user",
+          role: "system",
           content: prompt,
+        },
+        {
+          role: "user",
+          content: userPromptContext,
         },
       ],
       model: model || "gpt-4o",

@@ -26,6 +26,9 @@ inputs:
   use-github-generated-notes:
     description: "Use the GitHub generated notes."
     required: false
+  use-mention-commits-prs:
+    description: "Use the mention of commits and PRs."
+    required: false
 
 runs:
   using: "node20"
