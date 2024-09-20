@@ -105,10 +105,16 @@ async function run() {
     let userPromptContext = "";
     if (useGithubGeneratedNotes) {
       try {
-        const previousVersion = await octokit.rest.repos.getLatestRelease({
-          owner: context.repo.owner,
-          repo: context.repo.repo,
-        });
+        let previousVersion;
+        try {
+          previousVersion = await octokit.rest.repos.getLatestRelease({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+          });
+        } catch (error) {
+          info(`No previous version found: ${error.message}`);
+        }
+
         const notes = await octokit.rest.repos.generateReleaseNotes({
           owner: context.repo.owner,
           repo: context.repo.repo,
