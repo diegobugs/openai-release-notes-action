@@ -47279,7 +47279,7 @@ async function run() {
     const prompt =
       "Your task is write release notes of a new version of the software following this rules:" +
       (useMentionCommitsPrs
-        ? "\n - mention commits or PRs when possible."
+        ? "\n - mention commits or PRs when possible and add a link in markdown format."
         : "\n - do not mention commits or PRs.") +
       "\n - notes must consist in useful information about the new features or bug fixes" +
       "\n - must be clear and concise." +
