@@ -123,7 +123,7 @@ async function run() {
           previous_tag_name: previousVersion?.data?.tag_name,
         });
         userPromptContext =
-          "\nUse the following notes and improve it:\n" +
+          "\nUse the following notes to write the release notes:\n" +
           `${JSON.stringify(notes.data.body, null, 2)}`;
       } catch (error) {
         info(`Failed to generate github notes: ${error.message}`);
@@ -139,7 +139,7 @@ async function run() {
       );
 
       userPromptContext =
-        "\nUse the following commits data to write the notes (commit message, author, PRs):" +
+        "\nUse the following commits data to write the release notes (commit message, author, PRs):" +
         `${JSON.stringify(commitData, null, 2)}`;
     }
 
@@ -148,15 +148,17 @@ async function run() {
       (useMentionCommitsPrs
         ? "\n - mention commits or PRs when possible and add a link in markdown format."
         : "\n - do not mention commits or PRs.") +
-      "\n - notes must consist in useful information about the new features or bug fixes" +
+      "\n - do not add a mention to the user who made the changes." +
+      "\n - notes must consist in useful information about the new features or bug fixes." +
       "\n - must be clear and concise." +
       "\n - group as features and fixes if possible." +
       "\n - must be organized with features first and then bug fixes." +
       `\n - must be written in the following language '${language}'.` +
       "\n - must be written in a friendly and professional tone." +
-      "\n - must be exactly what the information provided says, without adding up." +
-      "\n - must be written in a markdown format" +
-      "\n - should have the following structure (you can use the following template):" +
+      "\n - must be exactly what the information provided says, without add up." +
+      "\n - must be written user friendly." +
+      "\n - must be written in a markdown format." +
+      "\n - must have the following structure (do not add title, footer or any other content):" +
       "\n   ```" +
       "\n   ## Features" +
       "\n   * This is a feature" +
