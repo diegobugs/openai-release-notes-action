@@ -118,9 +118,9 @@ async function run() {
         });
         userPromptContext =
           "\nUse the following notes and improve it:\n" +
-          `${JSON.stringify(notes, null, 2)}`;
+          `${JSON.stringify(notes.data.body, null, 2)}`;
       } catch (error) {
-        info("Failed to generate github notes", error);
+        info(`Failed to generate github notes: ${error.message}`);
       }
     } else {
       userPromptContext =
